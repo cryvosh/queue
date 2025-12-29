@@ -3,7 +3,7 @@
 #import "constants.wgsl"
 
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
-@group(0) @binding(1) var<storage, read> seeds: array<vec2u>;
+@group(0) @binding(1) var<storage, read> seeds: array<Seed>;
 @group(0) @binding(2) var<storage, read_write> output_buffer: array<vec4f>;
 
 const wg_size = 128;
@@ -15,7 +15,7 @@ fn main(
     let stride = num_workgroups.x * wg_size;
 
     for (var i = global_id.x; i < SEED_COUNT; i += stride) {
-        let center = vec2f(seeds[i]);
+        let center = seeds[i].pos;
         let radius = 3.0;
         
         let min_p = vec2i(max(vec2f(0.0), center - radius));

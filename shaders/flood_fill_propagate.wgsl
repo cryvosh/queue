@@ -26,7 +26,9 @@ fn pack_distance_and_seed(distance: u32, seed_id: u32) -> u32 {
 
 const wg_size = 32u;
 @compute @workgroup_size(wg_size)
-fn main(@builtin(local_invocation_index) local_index: u32) {
+fn main(
+    @builtin(local_invocation_index) local_index: u32) 
+{
     var to_enqueue: array<u32, 4>;
     var enqueue_count: u32;
     var enqueue_offset: u32;

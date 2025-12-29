@@ -8,7 +8,7 @@
 @group(0) @binding(1) var<storage, read_write> q: Queue;
 @group(0) @binding(2) var<storage, read_write> visited_buffer: array<atomic<u32>>;
 @group(0) @binding(3) var<storage, read_write> work_count: atomic<i32>;
-@group(0) @binding(4) var<storage, read_write> seeds: array<vec2u>;
+@group(0) @binding(4) var<storage, read_write> seeds: array<Seed>;
 
 const wg_size: u32 = 128u;
 
@@ -23,23 +23,36 @@ fn main(
         atomicStore(&work_count, i32(SEED_COUNT));
     }
 
-    // Initialize or perturb seeds and enqueue them
     for (var i = global_id.x; i < SEED_COUNT; i += stride) {
         randseed = wang_hash(i) ^ wang_hash(frame_number());
 
-        var pos_f: vec2f;
+        var pos: vec2f;
+        var vel: vec2f;
 
         if (frame_number() == 0u) {
-            pos_f = frand_unorm2() * resolution_f();
+            pos = frand_unorm2() * resolution_f();
+            vel = frand_snorm2() * 0.5;
         } else {
-            let prev_pos = vec2f(seeds[i]);
-            let offset = round(frand_snorm2() * 3.0);
-            pos_f = clamp(prev_pos + offset, vec2f(0.0), resolution_f() - 1.0);
+            let seed = seeds[i];
+            
+            // integrate
+            vel = seed.vel + frand_snorm2() * 0.01;
+            pos = seed.pos + vel;
+            
+            // bounce off walls
+            let max = resolution_f() - 1.0;
+            if pos.x < 0.0 { pos.x = -pos.x; vel.x = -vel.x; }
+            if pos.y < 0.0 { pos.y = -pos.y; vel.y = -vel.y; }
+            if pos.x > max.x { pos.x = 2.0 * max.x - pos.x; vel.x = -vel.x; }
+            if pos.y > max.y { pos.y = 2.0 * max.y - pos.y; vel.y = -vel.y; }
+            
+            pos = clamp(pos, vec2f(0.0), max);
         }
 
-        seeds[i] = vec2u(pos_f);
+        // Store updated state
+        seeds[i] = Seed(pos, vel);
         
-        let idx = pixel_index_f(pos_f);
+        let idx = pixel_index_f(pos);
         
         atomicStore(&visited_buffer[idx], i);
         loop { if (enqueue(&q, idx)) { break; } }
