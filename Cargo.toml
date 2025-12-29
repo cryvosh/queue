@@ -1,0 +1,32 @@
+[package]
+name = "queues"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dioxus = { version = "0.7.2", features = ["router"] }
+wgpu-utils = { git = "https://github.com/cryvosh/gpu-utils" }
+wgsl-utils = { git = "https://github.com/cryvosh/gpu-utils" }
+log = "0.4"
+console_log = "1.0"
+
+web-sys = { version = "0.3.69", features = [
+    "console",
+    "Element",
+    "Window",
+    "Document",
+    "HtmlCanvasElement",
+    "Performance",
+]}
+wasm-bindgen = "0.2"
+console_error_panic_hook = "0.1.6"
+wasm-bindgen-futures = "0.4.30"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+wgpu = "27.0"
+bytemuck = { version = "1.14", features = ["derive"] }
+
+[features]
+default = []
+web = ["dioxus/web", "dioxus/fullstack"]
+server = ["dioxus/server", "dioxus/fullstack"]

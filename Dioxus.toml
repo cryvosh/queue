@@ -1,0 +1,21 @@
+[application]
+name = "queues"
+
+[web.app]
+title = "Queues - WebGPU Demo"
+
+[web.watcher]
+watch_path = ["src", "shaders", "assets"]
+reload_html = true
+
+[web.resource]
+# Serve shaders directory as static assets
+public_url = "/"
+
+[[web.resource.dev.folder]]
+source = "assets"
+target = "/"
+
+[web.wasm_opt]
+level = "s"
+debug = false

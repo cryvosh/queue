@@ -1,0 +1,92 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0d10;
+}
+
+#main {
+  width: 100%;
+  height: 100%;
+}
+
+#canvas-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: #0b0d10;
+}
+
+#queues-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.timing-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  width: 220px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.timing-header-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.timing-collapsible {
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+  opacity: 0.8;
+  display: flex;
+  justify-content: space-between;
+}
+
+.timing-gpu-breakdown {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+
+.timing-entry {
+  margin-bottom: 8px;
+}
+
+.timing-entry-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.timing-progress-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.timing-progress-fill {
+  height: 100%;
+  background: #4af;
+  transition: width 0.1s ease-out;
+}

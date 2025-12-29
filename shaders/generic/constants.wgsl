@@ -1,0 +1,2 @@
+const UNVISITED = 0xFFFFFFFFu;
+const SEED_COUNT = 128u;
