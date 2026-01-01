@@ -27,15 +27,18 @@ fn pack_distance_and_seed(distance: u32, seed_id: u32) -> u32 {
 const wg_size = 32u;
 @compute @workgroup_size(wg_size)
 fn main(
-    @builtin(local_invocation_index) local_index: u32) 
-{
+    @builtin(local_invocation_index) local_index: u32,
+    @builtin(workgroup_id) workgroup_id: vec3u,
+) {
+    if workgroup_id.x >= 256u { return; }
+
     var to_enqueue: array<u32, 4>;
     var enqueue_count: u32;
     var enqueue_offset: u32;
     
     loop {
         if local_index == 0u {
-            wg_dequeue_result = wg_dequeue_reserve(&queue, wg_size);
+            wg_dequeue_result = wg_dequeue_reserve(wg_size);
             wg_all_done = wg_dequeue_result.count == 0u && atomicLoad(&work_count) <= 0;
             atomicStore(&wg_enqueue_total, 0u);
         }
@@ -46,7 +49,7 @@ fn main(
         enqueue_count = 0u;
         
         if (local_index < wg_dequeue_result.count) {
-            let pixel_idx = wg_dequeue_consume(&queue, wg_dequeue_result.start, local_index);
+            let pixel_idx = wg_dequeue_consume(wg_dequeue_result.start, local_index);
             let current = atomicLoad(&visited_buffer[pixel_idx]);
             
             if (current == UNVISITED) { // relaxed atomics make this possible
@@ -79,12 +82,12 @@ fn main(
         
         let total_to_enqueue = atomicLoad(&wg_enqueue_total);
         if local_index == 0u {
-            wg_enqueue_base = wg_enqueue_reserve(&queue, total_to_enqueue);
+            wg_enqueue_base = wg_enqueue_reserve(total_to_enqueue);
         }
         workgroupBarrier();
         
         for (var i = 0u; i < enqueue_count; i++) {
-            wg_enqueue_publish(&queue, wg_enqueue_base, enqueue_offset + i, to_enqueue[i]);
+            wg_enqueue_publish(wg_enqueue_base, enqueue_offset + i, to_enqueue[i]);
         }
         workgroupBarrier();
     }

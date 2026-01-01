@@ -370,7 +370,7 @@ impl Renderer {
             "flood_fill_propagate",
             &mut encoder,
             &mut self.timing_system,
-            256,
+            1024,
             1,
             1,
         )
